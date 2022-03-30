@@ -4,6 +4,7 @@ import numpy as np
 
 #img = cv2.imread('./data/putTogether_Color.jpg')
 img = cv2.imread('./data/putTogether_Gray.jpg',cv2.IMREAD_GRAYSCALE)
+font=cv2.FONT_HERSHEY_SIMPLEX
 
 # top left of ROI [x, y]
 roi_1st_origin = []
@@ -26,9 +27,9 @@ def onMouse(event, x, y, flags, param):
        else:
             # left down only --> 1st image
             roi_1st_origin.append([x, y])
-            print(roi_1st_origin)
+            index = roi_1st_origin.__len__()
             # red color patch size is 9
-            print('l',x-patch_size//2)
+            cv2.putText(img,str(index),roi_1st_origin[index-1],font,1,255,2)
             cv2.rectangle(param[0], (x - patch_size // 2, y - patch_size // 2),
                           (x + patch_size // 2, y + patch_size // 2), (0, 0, 255), 2)
             # cv2.imshow('Click center of ROI',param[0])
@@ -36,8 +37,9 @@ def onMouse(event, x, y, flags, param):
     elif event == cv2.EVENT_RBUTTONDOWN:
         # right down --> 2nd image
         roi_2nd_origin.append([x, y])
+        index = roi_2nd_origin.__len__()
         # green color patch size is 9
-        print('r',x-patch_size//2)
+        cv2.putText(img,str(index),roi_2nd_origin[index-1],font,1,255,2)
         cv2.rectangle(param[0], (x - patch_size // 2, y - patch_size // 2),
                       (x + patch_size // 2, y + patch_size // 2), (0, 255, 0), 2)
         # print('roi_2nd_origin ',roi_2nd_origin)
