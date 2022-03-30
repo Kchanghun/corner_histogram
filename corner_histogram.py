@@ -75,20 +75,36 @@ def drawHist():
             binX = np.arange(histSize)
             if i == 0:
                 plt.title('1st - '+str(index))
-                gx = cv2.Sobel(roi_1st_IM[index], cv2.CV_32F,1,0,ksize=3)
-                gy = cv2.Sobel(roi_1st_IM[index],cv2.CV_32F,0,1,ksize=3)
-                mag = cv2.magnitude(gx,gy)
-                dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
+                
+                # Sobel Filter
+                # gx = cv2.Sobel(roi_1st_IM[index], cv2.CV_32F,1,0,ksize=3)
+                # gy = cv2.Sobel(roi_1st_IM[index],cv2.CV_32F,0,1,ksize=3)
+                # mag = cv2.magnitude(gx,gy)
+                # dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
+                
+                # Laplacian Filter 
+                lap = cv2.Laplacian(roi_1st_IM[index],cv2.CV_32F)
+                dst = cv2.convertScaleAbs(lap)
+                dst = cv2.normalize(dst,None,0,255,cv2.NORM_MINMAX)
+                
                 roi_1st_hist.append(cv2.calcHist(images=[dst],channels=[0],mask=None,
                                      histSize=[histSize], ranges=[0,256]))
                 roi_1st_hist[index] = roi_1st_hist[index].flatten()
                 plt.bar(binX,roi_1st_hist[index],width=1,color = 'b')
             elif i == 1:
                 plt.title('2nd - '+str(index))
-                gx = cv2.Sobel(roi_2nd_IM[index], cv2.CV_32F,1,0,ksize=3)
-                gy = cv2.Sobel(roi_2nd_IM[index],cv2.CV_32F,0,1,ksize=3)
-                mag = cv2.magnitude(gx,gy)
-                dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
+                
+                # Sobel Filter
+                # gx = cv2.Sobel(roi_2nd_IM[index], cv2.CV_32F,1,0,ksize=3)
+                # gy = cv2.Sobel(roi_2nd_IM[index],cv2.CV_32F,0,1,ksize=3)
+                # mag = cv2.magnitude(gx,gy)
+                # dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
+                
+                # Laplacian Filter
+                lap = cv2.Laplacian(roi_2nd_IM[index],cv2.CV_32F)
+                dst = cv2.convertScaleAbs(lap)
+                dst = cv2.normalize(dst,None,0,255,cv2.NORM_MINMAX)
+                
                 roi_2nd_hist.append(cv2.calcHist(images=[roi_2nd_IM[index]],channels=[0],mask=None,
                                      histSize=[histSize], ranges=[0,256]))
                 roi_2nd_hist[index] = roi_2nd_hist[index].flatten()
