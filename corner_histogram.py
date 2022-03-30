@@ -106,8 +106,14 @@ def distanceCompare(roi_1st_hist,roi_2nd_hist):
     
     distance.sort(reverse=True)
     compareHist_result = distance[:4]    
+    matchROI()
     
-
+def matchROI():
+    global compareHist_result, roi_1st_anchor, roi_2nd_anchor
+    for i in range(4):
+        x1,y1 = roi_1st_anchor[compareHist_result[i][1]]
+        x2,y2 = roi_2nd_anchor[compareHist_result[i][2]]
+        cv2.line(img, (y1,x1),(y2,x2),255,3)
 
 cv2.imshow('Match ROI',img)
 cv2.setMouseCallback('Match ROI',onMouse,[img])
