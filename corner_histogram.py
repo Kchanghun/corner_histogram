@@ -74,17 +74,22 @@ def drawHist():
                 plt.title('1st - '+str(index))
                 roi_1st_hist.append(cv2.calcHist(images=[roi_1st_IM[index]],channels=[0],mask=None,
                                      histSize=[histSize], ranges=[0,256]))
+                cv2.normalize(roi_1st_hist[index],roi_1st_hist[index],1,0,cv2.NORM_L1)
                 roi_1st_hist[index] = roi_1st_hist[index].flatten()
                 plt.bar(binX,roi_1st_hist[index],width=1,color = 'b')
             elif i == 1:
                 plt.title('2nd - '+str(index))
                 roi_2nd_hist.append(cv2.calcHist(images=[roi_2nd_IM[index]],channels=[0],mask=None,
                                      histSize=[histSize], ranges=[0,256]))
+                cv2.normalize(roi_2nd_hist[index],roi_2nd_hist[index],1,0,cv2.NORM_L1)
                 roi_2nd_hist[index] = roi_2nd_hist[index].flatten()
                 plt.bar(binX,roi_2nd_hist[index],width=1,color = 'r')
-            
+    
     plt.tight_layout()
     plt.show()
+
+# def distanceCompare(roi_1st_hist,roi_2nd_hist):
+    
 
 cv2.imshow('Match ROI',img)
 cv2.setMouseCallback('Match ROI',onMouse,[img])
