@@ -51,8 +51,8 @@ def onMouse(event, x, y, flags, param):
 def getRoiImage(which, anchor):
     global img, roi_1st_IM, roi_2nd_IM, patch_size
     if which == 1:
-        roi_1st_IM.append(img[anchor[0]-patch_size//2:anchor[0]+patch_size//2,
-                              anchor[1]-patch_size//2:anchor[1]+patch_size]//2)
+        roi_1st_IM.append(img[anchor[0]-patch_size//2:anchor[0]+patch_size//2+1,
+                              anchor[1]-patch_size//2:anchor[1]+patch_size]//2+1)
         # cv2.imshow('1st Rois '+str(roi_1st_IM.__len__()),roi_1st_IM[roi_1st_IM.__len__()-1])
     elif which == 2:
         roi_2nd_IM.append(img[anchor[0]-patch_size//2:anchor[0]+patch_size//2,
@@ -82,8 +82,9 @@ def drawHist():
                 # mag = cv2.magnitude(gx,gy)
                 # dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
                 
-                # Laplacian Filter 
-                lap = cv2.Laplacian(roi_1st_IM[index],cv2.CV_32F)
+                # Laplacian Filter & Gaussian Filter
+                blur = cv2.GaussianBlur(roi_1st_IM[index],ksize=(7,7),sigmaX=0.0)
+                lap = cv2.Laplacian(blur,cv2.CV_32F)
                 dst = cv2.convertScaleAbs(lap)
                 dst = cv2.normalize(dst,None,0,255,cv2.NORM_MINMAX)
                 
@@ -100,12 +101,13 @@ def drawHist():
                 # mag = cv2.magnitude(gx,gy)
                 # dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
                 
-                # Laplacian Filter
-                lap = cv2.Laplacian(roi_2nd_IM[index],cv2.CV_32F)
+                # Laplacian Filter & Gaussian Filter
+                blur = cv2.GaussianBlur(roi_2nd_IM[index],ksize=(7,7),sigmaX=0.0)
+                lap = cv2.Laplacian(blur,cv2.CV_32F)
                 dst = cv2.convertScaleAbs(lap)
                 dst = cv2.normalize(dst,None,0,255,cv2.NORM_MINMAX)
                 
-                roi_2nd_hist.append(cv2.calcHist(images=[roi_2nd_IM[index]],channels=[0],mask=None,
+                roi_2nd_hist.append(cv2.calcHist(images=[dst],channels=[0],mask=None,
                                      histSize=[histSize], ranges=[0,256]))
                 roi_2nd_hist[index] = roi_2nd_hist[index].flatten()
                 plt.bar(binX,roi_2nd_hist[index],width=1,color = 'r')
