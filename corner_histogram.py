@@ -29,8 +29,8 @@ def onMouse(event, x, y, flags, param):
                 getRoiImage(2, roi_2nd_anchor[i])
        else:
             # left down only --> 1st image
-            roi_1st_anchor.append([y, x])
             index = roi_1st_anchor.__len__()
+            roi_1st_anchor.append([y, x])
             # red color patch size is 9
             cv2.putText(img,str(index),[x,y],font,1,255,2)
             cv2.rectangle(param[0], (x - patch_size // 2, y - patch_size // 2),
@@ -38,8 +38,8 @@ def onMouse(event, x, y, flags, param):
             # print('roi_1st_anchor ',roi_1st_anchor)
     elif event == cv2.EVENT_RBUTTONDOWN:
         # right down --> 2nd image
-        roi_2nd_anchor.append([y, x])
         index = roi_2nd_anchor.__len__()
+        roi_2nd_anchor.append([y, x])
         # green color patch size is 9
         cv2.putText(img,str(index),[x,y],font,1,255,2)
         cv2.rectangle(param[0], (x - patch_size // 2, y - patch_size // 2),
@@ -70,23 +70,30 @@ def drawHist():
     
     for i in range(2):
         for index in range(4):
-            histSize=8
+            histSize=32
             plt.subplot(2,4,i*4+index+1)
             binX = np.arange(histSize)
             if i == 0:
                 plt.title('1st - '+str(index))
-                roi_1st_hist.append(cv2.calcHist(images=[roi_1st_IM[index]],channels=[0],mask=None,
+                gx = cv2.Sobel(roi_1st_IM[index], cv2.CV_32F,1,0,ksize=3)
+                gy = cv2.Sobel(roi_1st_IM[index],cv2.CV_32F,0,1,ksize=3)
+                mag = cv2.magnitude(gx,gy)
+                dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
+                roi_1st_hist.append(cv2.calcHist(images=[dst],channels=[0],mask=None,
                                      histSize=[histSize], ranges=[0,256]))
-                cv2.normalize(roi_1st_hist[index],roi_1st_hist[index],1,0,cv2.NORM_L1)
                 roi_1st_hist[index] = roi_1st_hist[index].flatten()
                 plt.bar(binX,roi_1st_hist[index],width=1,color = 'b')
             elif i == 1:
                 plt.title('2nd - '+str(index))
+                gx = cv2.Sobel(roi_2nd_IM[index], cv2.CV_32F,1,0,ksize=3)
+                gy = cv2.Sobel(roi_2nd_IM[index],cv2.CV_32F,0,1,ksize=3)
+                mag = cv2.magnitude(gx,gy)
+                dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
                 roi_2nd_hist.append(cv2.calcHist(images=[roi_2nd_IM[index]],channels=[0],mask=None,
                                      histSize=[histSize], ranges=[0,256]))
-                cv2.normalize(roi_2nd_hist[index],roi_2nd_hist[index],1,0,cv2.NORM_L1)
                 roi_2nd_hist[index] = roi_2nd_hist[index].flatten()
                 plt.bar(binX,roi_2nd_hist[index],width=1,color = 'r')
+            plt.ylim([0,104])
     
     distanceCompare(roi_1st_hist,roi_2nd_hist)
     plt.tight_layout()
