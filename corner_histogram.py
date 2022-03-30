@@ -70,45 +70,61 @@ def drawHist():
     
     for i in range(2):
         for index in range(4):
-            histSize=32
+            histSize=120
             plt.subplot(2,4,i*4+index+1)
             binX = np.arange(histSize)
             if i == 0:
                 plt.title('1st - '+str(index))
                 
-                # Sobel Filter
-                # gx = cv2.Sobel(roi_1st_IM[index], cv2.CV_32F,1,0,ksize=3)
-                # gy = cv2.Sobel(roi_1st_IM[index],cv2.CV_32F,0,1,ksize=3)
+                # Sobel Filter & Gaussian
+                # blur = cv2.GaussianBlur(roi_1st_IM[index],ksize=(7,7),sigmaX=0.0)
+                # gx = cv2.Sobel(blur, cv2.CV_32F,1,0,ksize=3)
+                # gy = cv2.Sobel(blur,cv2.CV_32F,0,1,ksize=3)
                 # mag = cv2.magnitude(gx,gy)
                 # dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
                 
                 # Laplacian Filter & Gaussian Filter
-                blur = cv2.GaussianBlur(roi_1st_IM[index],ksize=(7,7),sigmaX=0.0)
-                lap = cv2.Laplacian(blur,cv2.CV_32F)
-                dst = cv2.convertScaleAbs(lap)
-                dst = cv2.normalize(dst,None,0,255,cv2.NORM_MINMAX)
+                # blur = cv2.GaussianBlur(roi_1st_IM[index],ksize=(7,7),sigmaX=0.0)
+                # lap = cv2.Laplacian(roi_1st_IM[index],cv2.CV_32F)
+                # dst = cv2.convertScaleAbs(lap)
+                # dst = cv2.normalize(dst,None,0,255,cv2.NORM_MINMAX)
                 
-                roi_1st_hist.append(cv2.calcHist(images=[dst],channels=[0],mask=None,
-                                     histSize=[histSize], ranges=[0,256]))
+                # Gradient Orientation
+                blur = cv2.GaussianBlur(roi_1st_IM[index],ksize=(7,7),sigmaX=0.0)
+                gx = cv2.Sobel(blur,cv2.CV_32F,1,0,ksize=3)
+                gy = cv2.Sobel(blur,cv2.CV_32F,0,1,ksize=3)
+                mag, angle = cv2.cartToPolar(gx,gy,angleInDegrees=True)
+                
+                
+                roi_1st_hist.append(cv2.calcHist(images=[angle],channels=[0],mask=None,
+                                     histSize=[histSize], ranges=[0,360]))
                 roi_1st_hist[index] = roi_1st_hist[index].flatten()
                 plt.bar(binX,roi_1st_hist[index],width=1,color = 'b')
             elif i == 1:
                 plt.title('2nd - '+str(index))
                 
-                # Sobel Filter
-                # gx = cv2.Sobel(roi_2nd_IM[index], cv2.CV_32F,1,0,ksize=3)
-                # gy = cv2.Sobel(roi_2nd_IM[index],cv2.CV_32F,0,1,ksize=3)
+                # Sobel Filter & Gaussian Filter
+                # blur = cv2.GaussianBlur(roi_2nd_IM[index],ksize=(7,7),sigmaX=0.0)
+                # gx = cv2.Sobel(blur, cv2.CV_32F,1,0,ksize=3)
+                # gy = cv2.Sobel(blur,cv2.CV_32F,0,1,ksize=3)
                 # mag = cv2.magnitude(gx,gy)
                 # dst = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_8U)
                 
                 # Laplacian Filter & Gaussian Filter
-                blur = cv2.GaussianBlur(roi_2nd_IM[index],ksize=(7,7),sigmaX=0.0)
-                lap = cv2.Laplacian(blur,cv2.CV_32F)
-                dst = cv2.convertScaleAbs(lap)
-                dst = cv2.normalize(dst,None,0,255,cv2.NORM_MINMAX)
+                # blur = cv2.GaussianBlur(roi_2nd_IM[index],ksize=(7,7),sigmaX=0.0)
+                # lap = cv2.Laplacian(roi_2nd_IM[index],cv2.CV_32F)
+                # dst = cv2.convertScaleAbs(lap)
+                # dst = cv2.normalize(dst,None,0,255,cv2.NORM_MINMAX)
                 
-                roi_2nd_hist.append(cv2.calcHist(images=[dst],channels=[0],mask=None,
-                                     histSize=[histSize], ranges=[0,256]))
+                # Gradient Orientation
+                blur = cv2.GaussianBlur(roi_2nd_IM[index],ksize=(7,7),sigmaX=0.0)
+                gx = cv2.Sobel(blur,cv2.CV_32F,1,0,ksize=3)
+                gy = cv2.Sobel(blur,cv2.CV_32F,0,1,ksize=3)
+                mag, angle = cv2.cartToPolar(gx,gy,angleInDegrees=True)
+                
+                
+                roi_2nd_hist.append(cv2.calcHist(images=[angle],channels=[0],mask=None,
+                                     histSize=[histSize], ranges=[0,360]))
                 roi_2nd_hist[index] = roi_2nd_hist[index].flatten()
                 plt.bar(binX,roi_2nd_hist[index],width=1,color = 'r')
             plt.ylim([0,104])
