@@ -1,3 +1,4 @@
+from turtle import distance
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -15,6 +16,8 @@ roi_1st_IM = []
 roi_2nd_IM = []
 
 patch_size = 9
+
+compareHist_result = []
 
 def onMouse(event, x, y, flags, param):
     global roi_1st_anchor, roi_2nd_anchor, patch_size
@@ -85,11 +88,26 @@ def drawHist():
                 roi_2nd_hist[index] = roi_2nd_hist[index].flatten()
                 plt.bar(binX,roi_2nd_hist[index],width=1,color = 'r')
     
+    distanceCompare(roi_1st_hist,roi_2nd_hist)
     plt.tight_layout()
     plt.show()
 
-# def distanceCompare(roi_1st_hist,roi_2nd_hist):
+def distanceCompare(roi_1st_hist,roi_2nd_hist):
+    global compareHist_result
+    distance = []
+    for i in range(4):
+        for j in range(4):
+            distance.append([np.absolute(
+                cv2.compareHist(
+                roi_1st_hist[i],
+                roi_2nd_hist[j],
+                cv2.HISTCMP_CORREL
+            )),i,j])
     
+    distance.sort(reverse=True)
+    compareHist_result = distance[:4]    
+    
+
 
 cv2.imshow('Match ROI',img)
 cv2.setMouseCallback('Match ROI',onMouse,[img])
